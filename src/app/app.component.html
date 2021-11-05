@@ -5,7 +5,6 @@
   [skip]="skip"
   [pageable]="true"
   [sortable]="true"
-  (dataStateChange)="onStateChange($event)"
   (edit)="editHandler($event)"
   (cancel)="cancelHandler($event)"
   (save)="saveHandler($event)"
@@ -18,17 +17,35 @@
     <button kendoGridAddCommand>Add new</button>
   </ng-template>
   <kendo-grid-column field="id" title="ID"></kendo-grid-column>
-  <kendo-grid-column field="name" title="Name"></kendo-grid-column>
-  <kendo-grid-column field="gender" title="Gender"></kendo-grid-column>
-  <kendo-grid-column field="address" title="Address"></kendo-grid-column>
-  <kendo-grid-column field="mobile" title="Mobile"></kendo-grid-column>
-  <kendo-grid-column field="dob" title="Date of Birth"></kendo-grid-column>
-  <kendo-grid-column field="age" title="age"></kendo-grid-column>
+  <kendo-grid-column field="name" title="Name" width="220"></kendo-grid-column>
+  <kendo-grid-column field="gender" title="Gender" width="200">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+      <!-- <kendo-dropdownlist
+        [data]="genderItems"
+        textField="name"
+        valueField="id"
+        [(ngModel)]="dataItem.gender"
+      ></kendo-dropdownlist> -->
+    </ng-template>
+  </kendo-grid-column>
+  <kendo-grid-column
+    field="address"
+    title="Address"
+    width="220"
+  ></kendo-grid-column>
+  <kendo-grid-column field="mobile" title="Mobile No"></kendo-grid-column>
+  <kendo-grid-column field="dob" title="Date of Birth" width="230">
+    <ng-template kendoGridCellTemplate let-dataItem>
+      {{ dataItem.dob | date: 'EEEE, MMM d, y' }}
+      <!-- <kendo-datepicker [(value)]=></kendo-datepicker> -->
+    </ng-template>
+  </kendo-grid-column>
+  <kendo-grid-column field="age" title="age" width="75"></kendo-grid-column>
 
   <kendo-grid-command-column title="command" width="220">
     <ng-template kendoGridCellTemplate let-isNew="isNew">
-      <button kendoGridEditCommand [primary]="true">Edit</button>
-      <button kendoGridRemoveCommand>Remove</button>
+      <button kendoGridEditCommand>Edit</button>
+      <button kendoGridRemoveCommand [primary]="true">Remove</button>
       <button kendoGridSaveCommand [disabled]="formGroup?.invalid">
         {{ isNew ? 'Add' : 'Update' }}
       </button>
@@ -38,3 +55,21 @@
     </ng-template>
   </kendo-grid-command-column>
 </kendo-grid>
+
+<kendo-dialog
+  title="Please confirm"
+  *ngIf="showConfirmDialog"
+  (close)="closeDialog()"
+  [minWidth]="250"
+  [width]="450"
+>
+  <p style="margin: 30px; text-align: center;">
+    Are you sure you want to delete {{ selectedStudent.name }}?
+  </p>
+  <kendo-dialog-actions>
+    <button kendoButton (click)="closeDialog()">No</button>
+    <button kendoButton (click)="confirmRemove()" primary="true">
+      Yes
+    </button>
+  </kendo-dialog-actions>
+</kendo-dialog>

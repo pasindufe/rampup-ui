@@ -1,6 +1,7 @@
 const config: any = {
   development: {
-    apiUrl: 'https://www.hasmandrivingschool.com.au:2053/api/',
+    graphQLUrl: 'http://localhost:3000/graphql',
+    apiUrl: 'http://localhost:3001/api/',
   },
 }
 

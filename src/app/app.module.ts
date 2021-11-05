@@ -6,17 +6,22 @@ import {
   HttpClientModule,
   HttpClientJsonpModule,
 } from '@angular/common/http'
-import { ReactiveFormsModule } from '@angular/forms'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { AppComponent } from './app.component'
 
 import { GridModule } from '@progress/kendo-angular-grid'
-import { AppComponent } from './app.component'
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns'
+import { DateInputsModule } from '@progress/kendo-angular-dateinputs'
+import { NotificationModule } from '@progress/kendo-angular-notification'
 
 import { APOLLO_OPTIONS } from 'apollo-angular'
 import { HttpLink } from 'apollo-angular/http'
 import { InMemoryCache } from '@apollo/client/core'
 
-import { EditService } from './edit.service'
-import { StudentApiService } from './services/student-api-service'
+import { StudentService } from './services/student-api-service'
+import { baseConfig } from './services/config'
+import { AlertNotificationService } from './services/alert-notification-service'
+import { DialogsModule } from '@progress/kendo-angular-dialog'
 
 @NgModule({
   declarations: [AppComponent],
@@ -25,28 +30,29 @@ import { StudentApiService } from './services/student-api-service'
     HttpClientJsonpModule,
     BrowserModule,
     BrowserAnimationsModule,
+    FormsModule,
     ReactiveFormsModule,
     GridModule,
+    DropDownsModule,
+    DateInputsModule,
+    NotificationModule,
+    DialogsModule,
   ],
   providers: [
-    {
-      deps: [HttpClient],
-      provide: EditService,
-      useFactory: (jsonp: HttpClient) => () => new EditService(jsonp),
-    },
     {
       provide: APOLLO_OPTIONS,
       useFactory: (httpLink: HttpLink) => {
         return {
           cache: new InMemoryCache(),
           link: httpLink.create({
-            uri: 'http://localhost:3000/graphql',
+            uri: baseConfig(process.env.NODE_ENV).graphQLUrl,
           }),
         }
       },
       deps: [HttpLink],
     },
-    StudentApiService,
+    StudentService,
+    AlertNotificationService,
   ],
   bootstrap: [AppComponent],
 })
