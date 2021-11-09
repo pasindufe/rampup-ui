@@ -12,7 +12,7 @@ export class AlertNotificationService {
       animation: animation,
       position: { horizontal: 'center', vertical: 'top' },
       type: type,
-      closable: true,
+      hideAfter: 3000,
     })
   }
 }

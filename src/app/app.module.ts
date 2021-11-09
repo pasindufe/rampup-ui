@@ -1,11 +1,7 @@
 import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import {
-  HttpClient,
-  HttpClientModule,
-  HttpClientJsonpModule,
-} from '@angular/common/http'
+import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { AppComponent } from './app.component'
 
@@ -22,6 +18,9 @@ import { StudentService } from './services/student-api-service'
 import { baseConfig } from './services/config'
 import { AlertNotificationService } from './services/alert-notification-service'
 import { DialogsModule } from '@progress/kendo-angular-dialog'
+import { UploadsModule } from '@progress/kendo-angular-upload'
+import { ButtonsModule } from '@progress/kendo-angular-buttons'
+import { IndicatorsModule } from '@progress/kendo-angular-indicators'
 
 @NgModule({
   declarations: [AppComponent],
@@ -37,6 +36,9 @@ import { DialogsModule } from '@progress/kendo-angular-dialog'
     DateInputsModule,
     NotificationModule,
     DialogsModule,
+    UploadsModule,
+    ButtonsModule,
+    IndicatorsModule,
   ],
   providers: [
     {

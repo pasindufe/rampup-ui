@@ -1,7 +1,7 @@
 const config: any = {
   development: {
     graphQLUrl: 'http://localhost:3000/graphql',
-    apiUrl: 'http://localhost:3001/api/',
+    restApiUrl: 'http://localhost:3001/api/',
   },
 }
 
