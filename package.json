@@ -37,6 +37,7 @@
     "core-js": "2.6.12",
     "graphql": "15.5.0",
     "moment": "^2.29.1",
+    "ngx-socket-io": "^4.1.0",
     "rxjs": "6.6.7",
     "tslib": "1.14.1",
     "web-animations-js": "2.3.2",
@@ -44,7 +45,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --o",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

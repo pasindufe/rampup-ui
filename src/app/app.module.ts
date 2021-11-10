@@ -22,6 +22,12 @@ import { UploadsModule } from '@progress/kendo-angular-upload'
 import { ButtonsModule } from '@progress/kendo-angular-buttons'
 import { IndicatorsModule } from '@progress/kendo-angular-indicators'
 
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io'
+
+const socketConfig: SocketIoConfig = {
+  url: baseConfig(process.env.NODE_ENV as string).webSocketUrl,
+}
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -39,6 +45,7 @@ import { IndicatorsModule } from '@progress/kendo-angular-indicators'
     UploadsModule,
     ButtonsModule,
     IndicatorsModule,
+    SocketIoModule.forRoot(socketConfig),
   ],
   providers: [
     {

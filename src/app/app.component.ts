@@ -4,9 +4,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms'
 import {
   DataBindingDirective,
   GridDataResult,
-  PageChangeEvent,
 } from '@progress/kendo-angular-grid'
-import { LoaderType } from '@progress/kendo-angular-indicators'
 
 import { StudentService } from './services/student-api-service'
 import { AddUpdateStudentRequest } from './types/add-student-request'
@@ -17,6 +15,7 @@ import * as moment from 'moment'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { State, process } from '@progress/kendo-data-query'
+import { WebSocketService } from './services/web-socket.service'
 @Component({
   selector: 'my-app',
   templateUrl: './app.component.html',
@@ -45,6 +44,7 @@ export class AppComponent implements OnInit {
   constructor(
     private studentService: StudentService,
     private alertService: AlertNotificationService,
+    private webSocketService: WebSocketService,
   ) {}
 
   @ViewChild('fileInputRef', { static: false })
@@ -59,6 +59,26 @@ export class AppComponent implements OnInit {
       map((data) => process(data, this.gridState)),
     )
     this.studentService.fetch()
+    this.getWebSocketResponse()
+  }
+
+  private getWebSocketResponse() {
+    this.webSocketService.receiveResponse().subscribe((res: any) => {
+      res.succeed
+        ? this.alertService.showNotification(
+            res.message,
+            { type: 'slide', duration: 400 },
+            { style: 'success', icon: true },
+            { horizontal: 'right', vertical: 'top' },
+          )
+        : this.alertService.showNotification(
+            res.message,
+            { type: 'slide', duration: 400 },
+            { style: 'error', icon: true },
+            { horizontal: 'right', vertical: 'top' },
+          )
+      setInterval(() => location.reload(), 3000)
+    })
   }
 
   public onStateChange(state: State) {
