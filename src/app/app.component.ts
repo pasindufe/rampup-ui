@@ -16,6 +16,7 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { State, process } from '@progress/kendo-data-query'
 import { WebSocketService } from './services/web-socket.service'
+import { HttpErrorResponse } from '@angular/common/http'
 @Component({
   selector: 'my-app',
   templateUrl: './app.component.html',
@@ -35,12 +36,13 @@ export class AppComponent implements OnInit {
   public isLoading = false
 
   public view: Observable<GridDataResult>
+  public students = []
+  gridView: GridDataResult
   public gridState: State = {
     sort: [],
     skip: 0,
     take: 50,
   }
-
   constructor(
     private studentService: StudentService,
     private alertService: AlertNotificationService,
@@ -55,35 +57,55 @@ export class AppComponent implements OnInit {
   private gridData: any[] = []
 
   public ngOnInit(): void {
-    this.view = this.studentService.pipe(
-      map((data) => process(data, this.gridState)),
-    )
-    this.studentService.fetch()
+    // this.view = this.studentService.pipe(
+    //   map((data) => process(data, this.gridState)),
+    // )
+    // this.studentService.fetch()
+    this.getStudents()
     this.getWebSocketResponse()
+  }
+
+  private getStudents() {
+    this.isLoading = true
+    this.studentService.fetchStudents().subscribe(
+      (res: any) => {
+        this.students = res.data.students
+        this.gridView = {
+          data: this.students,
+          total: this.students.length,
+        }
+        this.isLoading = false
+      },
+      (error) => {
+        this.isLoading = false
+      },
+    )
   }
 
   private getWebSocketResponse() {
     this.webSocketService.receiveResponse().subscribe((res: any) => {
-      res.succeed
-        ? this.alertService.showNotification(
-            res.message,
-            { type: 'slide', duration: 400 },
-            { style: 'success', icon: true },
-            { horizontal: 'right', vertical: 'top' },
-          )
-        : this.alertService.showNotification(
-            res.message,
-            { type: 'slide', duration: 400 },
-            { style: 'error', icon: true },
-            { horizontal: 'right', vertical: 'top' },
-          )
-      setInterval(() => location.reload(), 3000)
+      if (res.succeed) {
+        this.alertService.showNotification(
+          res.message,
+          { type: 'slide', duration: 400 },
+          { style: 'success', icon: true },
+          { horizontal: 'right', vertical: 'top' },
+        )
+        this.getStudents()
+      } else {
+        this.alertService.showNotification(
+          res.message,
+          { type: 'slide', duration: 400 },
+          { style: 'error', icon: true },
+          { horizontal: 'right', vertical: 'top' },
+        )
+      }
     })
   }
 
   public onStateChange(state: State) {
     this.gridState = state
-    this.studentService.fetch()
+    this.getStudents()
   }
 
   public addHandler({ sender }) {
@@ -140,9 +162,11 @@ export class AppComponent implements OnInit {
             { type: 'slide', duration: 400 },
             { style: 'success', icon: true },
           )
+          this.getStudents()
         }
       },
-      (error) => {
+      (error: HttpErrorResponse) => {
+        console.log(error.error.message)
         this.alertService.showNotification(
           'Failed to save student!',
           { type: 'slide', duration: 400 },
@@ -164,6 +188,7 @@ export class AppComponent implements OnInit {
             { type: 'slide', duration: 400 },
             { style: 'success', icon: true },
           )
+          this.getStudents()
         }
       },
       (error) => {
@@ -196,6 +221,7 @@ export class AppComponent implements OnInit {
             { type: 'slide', duration: 400 },
             { style: 'success', icon: true },
           )
+          this.getStudents()
         }
       },
       (error) => {

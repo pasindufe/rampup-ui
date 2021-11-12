@@ -3,35 +3,12 @@ import { baseConfig } from './config'
 import { HttpClient } from '@angular/common/http'
 import { Apollo, gql } from 'apollo-angular'
 import { AddUpdateStudentRequest } from '../types/add-student-request'
-import { BehaviorSubject, Observable } from 'rxjs'
-import { tap, map } from 'rxjs/operators'
+import { Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
 
 @Injectable()
-export class StudentService extends BehaviorSubject<any[]> {
-  constructor(private apollo: Apollo, private http: HttpClient) {
-    super([])
-  }
-
-  private data: any[] = []
-
-  public fetch() {
-    if (this.data.length) {
-      return super.next(this.data)
-    }
-    this.fetchStudents()
-      .pipe(
-        tap((res: any) => {
-          this.data = res.data?.students
-        }),
-      )
-      .subscribe((res: any) => {
-        super.next(res.data?.students)
-      })
-  }
-
-  private reset() {
-    this.data = []
-  }
+export class StudentService {
+  constructor(private apollo: Apollo, private http: HttpClient) {}
 
   fetchStudents = (): Observable<any[]> => {
     return this.apollo
@@ -51,15 +28,6 @@ export class StudentService extends BehaviorSubject<any[]> {
         `,
       })
       .valueChanges.pipe(map((res: any) => res))
-  }
-
-  public update(id: number, data: any) {
-    this.reset()
-
-    this.updateStudent(id, data).subscribe(
-      () => this.fetch(),
-      () => this.fetch(),
-    )
   }
 
   addStudent = (payload: AddUpdateStudentRequest) => {

@@ -52,10 +52,15 @@ const socketConfig: SocketIoConfig = {
       provide: APOLLO_OPTIONS,
       useFactory: (httpLink: HttpLink) => {
         return {
-          cache: new InMemoryCache(),
           link: httpLink.create({
             uri: baseConfig(process.env.NODE_ENV).graphQLUrl,
           }),
+          cache: new InMemoryCache(),
+          defaultOptions: {
+            watchQuery: {
+              fetchPolicy: 'no-cache',
+            },
+          },
         }
       },
       deps: [HttpLink],

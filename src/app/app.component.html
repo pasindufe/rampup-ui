@@ -12,6 +12,7 @@
         name="select"
         (change)="selectFile($event)"
         accept=".xlsx,.xls"
+        [disabled]="isLoading"
       />
     </div>
     <div class="col-1">
@@ -25,6 +26,7 @@
         Upload
       </button>
     </div>
+
     <div class="k-block" *ngIf="isLoading">
       <kendo-loader></kendo-loader>
     </div>
@@ -37,7 +39,7 @@
   </div>
   <div class="row mt-4">
     <kendo-grid
-      [data]="view | async"
+      [data]="gridView"
       [height]="533"
       [pageSize]="gridState.take"
       [skip]="gridState.skip"
@@ -55,7 +57,7 @@
       <ng-template kendoGridToolbarTemplate>
         <button kendoGridAddCommand>Add new</button>
       </ng-template>
-      <kendo-grid-column field="id" title="Id"></kendo-grid-column>
+      <kendo-grid-column field="id" title="Id" width="70"></kendo-grid-column>
       <kendo-grid-column
         field="name"
         title="Name"
@@ -66,7 +68,7 @@
         field="gender"
         title="Gender"
         editor="dropdown"
-        width="200"
+        width="120"
       >
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ getGender(dataItem.gender)?.name }}
@@ -88,22 +90,26 @@
       <kendo-grid-column
         field="address"
         title="Address"
-        width="220"
+        width="200"
       ></kendo-grid-column>
-      <kendo-grid-column field="mobile" title="Mobile No"></kendo-grid-column>
+      <kendo-grid-column
+        field="mobile"
+        title="Mobile No"
+        width="150"
+      ></kendo-grid-column>
       <kendo-grid-column
         field="dob"
         title="Date of Birth"
-        width="230"
+        width="200"
         editor="date"
       >
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.dob | date: 'EEEE, MMM d, y' }}
         </ng-template>
       </kendo-grid-column>
-      <kendo-grid-column field="age" title="age" width="75"></kendo-grid-column>
+      <kendo-grid-column field="age" title="age" width="50"></kendo-grid-column>
 
-      <kendo-grid-command-column title="Action" width="220">
+      <kendo-grid-command-column title="Action" width="200">
         <ng-template kendoGridCellTemplate let-isNew="isNew">
           <button kendoGridEditCommand>Edit</button>
           <button kendoGridRemoveCommand [primary]="true">Remove</button>
