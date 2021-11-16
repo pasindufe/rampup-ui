@@ -4,6 +4,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms'
 import {
   DataBindingDirective,
   GridDataResult,
+  PageChangeEvent,
 } from '@progress/kendo-angular-grid'
 
 import { StudentService } from './services/student-api-service'
@@ -38,11 +39,10 @@ export class AppComponent implements OnInit {
   public view: Observable<GridDataResult>
   public students = []
   gridView: GridDataResult
-  public gridState: State = {
-    sort: [],
-    skip: 0,
-    take: 50,
-  }
+
+  public pageSize = 10
+  public skip = 0
+
   constructor(
     private studentService: StudentService,
     private alertService: AlertNotificationService,
@@ -62,10 +62,10 @@ export class AppComponent implements OnInit {
     // )
     // this.studentService.fetch()
     this.getStudents()
-    this.getWebSocketResponse()
+    // this.getWebSocketResponse()
   }
 
-  private getStudents() {
+  public getStudents() {
     this.isLoading = true
     this.studentService.fetchStudents().subscribe(
       (res: any) => {
@@ -103,9 +103,16 @@ export class AppComponent implements OnInit {
     })
   }
 
-  public onStateChange(state: State) {
-    this.gridState = state
-    this.getStudents()
+  public pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip
+    this.loadItems()
+  }
+
+  private loadItems(): void {
+    this.gridView = {
+      data: this.students.slice(this.skip, this.skip + this.pageSize),
+      total: this.students.length,
+    }
   }
 
   public addHandler({ sender }) {
@@ -165,8 +172,7 @@ export class AppComponent implements OnInit {
           this.getStudents()
         }
       },
-      (error: HttpErrorResponse) => {
-        console.log(error.error.message)
+      (error) => {
         this.alertService.showNotification(
           'Failed to save student!',
           { type: 'slide', duration: 400 },
@@ -177,8 +183,6 @@ export class AppComponent implements OnInit {
   }
 
   private async updateStudent(id, student, sender, rowIndex) {
-    // await this.studentService.update(id, student)
-    // sender.closeRow(rowIndex)
     this.studentService.updateStudent(id, student).subscribe(
       (res: any) => {
         if (res.data?.updateStudent?.id > 0) {

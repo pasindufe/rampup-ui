@@ -41,17 +41,16 @@
     <kendo-grid
       [data]="gridView"
       [height]="533"
-      [pageSize]="gridState.take"
-      [skip]="gridState.skip"
-      [sort]="gridState.sort"
+      [pageSize]="pageSize"
+      [skip]="skip"
       [pageable]="true"
       [sortable]="true"
-      (dataStateChange)="onStateChange($event)"
       (edit)="editHandler($event)"
       (cancel)="cancelHandler($event)"
       (save)="saveHandler($event)"
       (remove)="removeHandler($event)"
       (add)="addHandler($event)"
+      (pageChange)="pageChange($event)"
       [navigable]="true"
     >
       <ng-template kendoGridToolbarTemplate>

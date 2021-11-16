@@ -1,20 +1,28 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, inject, TestBed } from '@angular/core/testing'
 import { AppComponent } from './app.component'
 import { StudentService } from './services/student-api-service'
 import { GridModule } from '@progress/kendo-angular-grid'
-import { of } from 'rxjs'
+import { Observable, Observer, of } from 'rxjs'
 import { AlertNotificationService } from './services/alert-notification-service'
 import { WebSocketService } from './services/web-socket.service'
 import { Socket } from 'ngx-socket-io'
-
-class MockMyService {}
+import { NotificationService } from '@progress/kendo-angular-notification'
 
 describe('Component:App', () => {
   let component: AppComponent
   let fixture: ComponentFixture<AppComponent>
   let alertService: AlertNotificationService
-  let webSocketService = new WebSocketService(new Socket(null))
+  let webSocketIOService: WebSocketService
   let studentService: StudentService
+  let testBedStudentService: StudentService
+
+  let notificationService: NotificationService
+  let testInjectableMock: AlertNotificationService = new AlertNotificationService(
+    notificationService,
+  )
+
+  let socket: Socket
+  let testInjectableMock1: WebSocketService = new WebSocketService(socket)
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
@@ -28,13 +36,14 @@ describe('Component:App', () => {
         },
         {
           provide: AlertNotificationService,
-          useValue: alertService,
+          useValue: testInjectableMock,
         },
         {
           provide: WebSocketService,
-          useValue: webSocketService,
+          useValue: testInjectableMock1,
         },
       ],
+
       imports: [GridModule],
     }).compileComponents()
   })
@@ -43,14 +52,14 @@ describe('Component:App', () => {
     fixture = TestBed.createComponent(AppComponent)
     component = fixture.componentInstance
 
-    studentService = TestBed.get(StudentService)
-    // alertService = TestBed.get(AlertNotificationService)
-    // webSocketService = TestBed.get(WebSocketService)
+    studentService = fixture.debugElement.injector.get(StudentService)
+    alertService = fixture.debugElement.injector.get(AlertNotificationService)
+    webSocketIOService = fixture.debugElement.injector.get(WebSocketService)
 
     fixture.detectChanges()
   })
 
-  it('should load product detail', () => {
+  it('should load component', () => {
     spyOn(studentService, 'fetchStudents').and.callThrough()
     component.ngOnInit()
     fixture.detectChanges()
