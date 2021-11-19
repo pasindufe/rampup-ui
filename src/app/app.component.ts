@@ -62,11 +62,10 @@ export class AppComponent implements OnInit {
     // )
     // this.studentService.fetch()
     this.getStudents()
-    // this.getWebSocketResponse()
+    this.getWebSocketResponse()
   }
 
   public getStudents() {
-    this.isLoading = true
     this.studentService.fetchStudents().subscribe(
       (res: any) => {
         this.students = res.data.students
@@ -74,11 +73,8 @@ export class AppComponent implements OnInit {
           data: this.students,
           total: this.students.length,
         }
-        this.isLoading = false
       },
-      (error) => {
-        this.isLoading = false
-      },
+      (error) => {},
     )
   }
 
@@ -90,6 +86,7 @@ export class AppComponent implements OnInit {
           { type: 'slide', duration: 400 },
           { style: 'success', icon: true },
           { horizontal: 'right', vertical: 'top' },
+          5000,
         )
         this.getStudents()
       } else {
@@ -262,8 +259,9 @@ export class AppComponent implements OnInit {
       formData.append('file', this.inputFile)
       this.studentService.uploadExcelFile(formData).subscribe(
         (res: any) => {
-          this.isLoading = false
+          console.log(res)
           if (res && res.completed) {
+            this.isLoading = false
             this.alertService.showNotification(
               'Student file uploaded successfully!',
               { type: 'slide', duration: 400 },
