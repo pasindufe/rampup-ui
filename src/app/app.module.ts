@@ -22,14 +22,15 @@ import { UploadsModule } from '@progress/kendo-angular-upload'
 import { ButtonsModule } from '@progress/kendo-angular-buttons'
 import { IndicatorsModule } from '@progress/kendo-angular-indicators'
 
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io'
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { TestComponent } from './test/test.component'
 
 const socketConfig: SocketIoConfig = {
   url: baseConfig(process.env.NODE_ENV as string).webSocketUrl,
 }
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, TestComponent],
   imports: [
     HttpClientModule,
     HttpClientJsonpModule,
